@@ -13,12 +13,6 @@ function App() {
   const [count, setCount, reset] = useResetState(0);
   const [isVisible, toggleVisible] = useToggle();
 
-  useEffect(() => {
-    if (isEscPressed) {
-      console.log("Escape key is pressed");
-    }
-  }, [isEscPressed]);
-
   const sectionStyle = {
     border: "4px solid black",
     borderRadius: "8px",
