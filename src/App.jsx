@@ -1,9 +1,12 @@
+import { useState } from "react";
 import useKeyPress from "./components/useKeyPress";
 import { useEffect } from "react";
 import useUndoRedo from "./components/useUndo";
 import useIsOffline from "./components/useIsoffline";
 import useResetState from "./components/useResetState";
 import useToggle from "./components/useToggle";
+import { useClipboard } from "./components/useClipboard";
+import { useForm } from "./components/useForm";
 
 function App() {
   const [text, setText, undo, redo] = useUndoRedo("Hello");
@@ -12,6 +15,22 @@ function App() {
   const isOffline = useIsOffline();
   const [count, setCount, reset] = useResetState(0);
   const [isVisible, toggleVisible] = useToggle();
+  const [cliptext, setClipText] = useState("Hello, clipboard!");
+  const { copy, isCopied } = useClipboard();
+  const initialValues = {
+    name: "",
+    email: "",
+  };
+
+  const onSubmit = (formData) => {
+    console.log("Submitted Data:", formData);
+    alert("Form submitted!");
+  };
+
+  const { values, handleChange, handleSubmit, resetForm } = useForm(
+    initialValues,
+    onSubmit
+  );
 
   useEffect(() => {
     if (isEscPressed) {
@@ -69,12 +88,50 @@ function App() {
           <button onClick={redo}>Redo</button>
         </div>
         <div style={sectionStyle}>
-          <h2>Custom Hook: useToggle</h2>
+          <h2>useToggle</h2>
           <button onClick={toggleVisible}>
             {isVisible ? "Hide" : "Show"} Message
           </button>
 
           {isVisible && <p>Hello! This message is Maitri.</p>}
+        </div>
+        <div style={sectionStyle}>
+          <h2>useClipboard</h2>
+          <input
+            type="text"
+            value={cliptext}
+            onChange={(e) => setClipText(e.target.value)}
+          />
+          <button onClick={() => copy(cliptext)}>
+            {isCopied ? "Copied!" : "Copy"}
+          </button>
+        </div>
+        <div style={sectionStyle}>
+          <h2> useForm</h2>
+          <form onSubmit={handleSubmit}>
+            <div>
+              <label>Name:</label>
+              <input
+                name="name"
+                value={values.name}
+                onChange={handleChange}
+                placeholder="Enter your name"
+              />
+            </div>
+            <div>
+              <label>Email:</label>
+              <input
+                name="email"
+                value={values.email}
+                onChange={handleChange}
+                placeholder="Enter your email"
+              />
+            </div>
+            <button type="submit">Submit</button>
+            <button type="button" onClick={resetForm}>
+              Reset
+            </button>
+          </form>
         </div>
       </div>
     </>
